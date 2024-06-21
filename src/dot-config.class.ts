@@ -57,24 +57,11 @@ export class DotConfig extends EventTarget {
 	}
 
 	async get<T>(path: string, defaultValue: T | undefined | ErrorIfNotFoundToken = errorIfNotFoundToken): Promise<T | undefined> {
-		if (this.cache.items[path]) {
-			return this.cache.items[path] as T;
+		if (!this.cache.items[path]) {
+			await this.load(path, defaultValue);
 		}
 
-		const encoder = encoderMatch(path, this.encoders, this.fallbackEncoder);
-
-		if (!this.scribe.exists(path)) {
-			if (defaultValue === errorIfNotFoundToken) {
-				throw new NoConfigFile(path);
-			}
-
-			return defaultValue as T | undefined;
-		}
-
-		const config = encoder.decode(await this.scribe.read(path));
-		this.cache.items[path] = config;
-
-		return config as T;
+		return this.cache.items[path] as T;
 	}
 
 	async load<T>(path: string, defaultValue: T | undefined | ErrorIfNotFoundToken = errorIfNotFoundToken) {
