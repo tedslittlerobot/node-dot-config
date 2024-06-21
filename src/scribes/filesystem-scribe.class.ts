@@ -26,7 +26,9 @@ export class FilesystemScribe implements Scribe {
 		await writeFile(this.fullPath(path), contents, 'utf8');
 	}
 
-	async destroy(file: string) {
-		await unlink(this.fullPath(file));
+	async destroy(path: string) {
+		if (this.exists(path)) {
+			await unlink(this.fullPath(path));
+		}
 	}
 }
