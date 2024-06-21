@@ -10,7 +10,6 @@ export type DotConfigEvent<T> = {
 	type: string;
 	path: string;
 	config?: T;
-	encoded?: string;
 };
 
 export type DotConfigEventHandler<T> = (event: DotConfigEvent<T>) => Promise<void>;
@@ -32,11 +31,10 @@ export class DotConfig extends EventTarget {
 		}
 
 		const encoder = encoderMatch(path, this.encoders, this.fallbackEncoder);
-		const encoded = await encoder.encode(config);
 
-		await this.scribe.write(path, encoded);
+		await this.scribe.write(path, await encoder.encode(config));
 
-		await this.emit('persisted', {path, config, encoded});
+		await this.emit('persisted', {path, config});
 	}
 
 	async set<T>(path: string, config: T, persist = true): Promise<T> {
@@ -84,11 +82,10 @@ export class DotConfig extends EventTarget {
 			throw new NoConfigFile(path);
 		}
 
-		const encoded = await this.scribe.read(path);
-		const config = encoder.decode(encoded);
+		const config = encoder.decode(await this.scribe.read(path));
 		this.cache.items[path] = config;
 
-		await this.emit('loaded', {path, encoded, config});
+		await this.emit('loaded', {path, config});
 
 		return config as T;
 	}
