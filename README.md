@@ -6,7 +6,7 @@ A wrapper around storing and retrieving config from .config
 ## Installation
 
 ```bash
-npm i dot-config
+npm i dot-config-cache
 ```
 
 ## Basic Usage

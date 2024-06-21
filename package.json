@@ -1,10 +1,10 @@
 {
-  "name": "dot-config",
+  "name": "dot-config-cache",
   "version": "1.0.0",
   "description": "A wrapper around storing and retrieving config from .config",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tedslittlerobot/node-dot-config.git"
+    "url": "git+https://github.com/tedslittlerobot/node-dot-config-cache.git"
   },
   "keywords": [
     "node",
@@ -15,9 +15,9 @@
   "author": "Stefan",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tedslittlerobot/dot-config/issues"
+    "url": "https://github.com/tedslittlerobot/dot-config-cache/issues"
   },
-  "homepage": "https://github.com/tedslittlerobot/dot-config#readme",
+  "homepage": "https://github.com/tedslittlerobot/dot-config-cache#readme",
   "scripts": {
     "clean": "rm -rf build bin dist lib",
     "build": "npm run clean && tsc && ts-rel src lib",
