@@ -42,12 +42,14 @@ export class DotConfig extends EventTarget {
 		await this.emit('persisted', {path, config, encoded});
 	}
 
-	async set<T>(path: string, config: T, persist = true): Promise<void> {
+	async set<T>(path: string, config: T, persist = true): Promise<T> {
 		this.cache.items[path] = config;
 
 		if (persist) {
 			await this.persist(path);
 		}
+
+		return config;
 	}
 
 	async get<T>(path: string, defaultValue: T | undefined | ErrorIfNotFoundToken = errorIfNotFoundToken): Promise<T | undefined> {
