@@ -6,9 +6,6 @@ import {encoderMatch} from './utils.js';
 import {ConfigCache} from './config-cache.class.js';
 import {NoConfigFile} from './errors.js';
 
-type ErrorIfNotFoundToken = {__errorIfNotFound: true};
-const errorIfNotFoundToken: ErrorIfNotFoundToken = {__errorIfNotFound: true};
-
 export type DotConfigEvent<T> = {
 	type: string;
 	path: string;
@@ -56,26 +53,35 @@ export class DotConfig extends EventTarget {
 		await this.scribe.destroy(path);
 	}
 
-	async get<T>(path: string, defaultValue: T | undefined | ErrorIfNotFoundToken = errorIfNotFoundToken): Promise<T | undefined> {
+	async get<T>(path: string): Promise<T> {
 		if (!this.cache.items[path]) {
-			await this.load(path, defaultValue);
+			await this.load(path);
 		}
 
 		return this.cache.items[path] as T;
 	}
 
-	async load<T>(path: string, defaultValue: T | undefined | ErrorIfNotFoundToken = errorIfNotFoundToken) {
+	async maybeGet<T>(path: string, defaultValue?: T): Promise<T | undefined> {
+		if (!this.cache.items[path]) {
+			try {
+				await this.load(path);
+			} catch (error) {
+				if (error instanceof NoConfigFile) {
+					return defaultValue;
+				}
+			}
+		}
+
+		return this.cache.items[path] as T;
+	}
+
+	async load<T>(path: string) {
 		await this.emit('loading', {path});
 
 		const encoder = encoderMatch(path, this.encoders, this.fallbackEncoder);
 
 		if (!this.scribe.exists(path)) {
-			if (defaultValue === errorIfNotFoundToken) {
-				throw new NoConfigFile(path);
-			}
-
-			await this.emit('loaded:default', {path, config: defaultValue});
-			return defaultValue;
+			throw new NoConfigFile(path);
 		}
 
 		const encoded = await this.scribe.read(path);
