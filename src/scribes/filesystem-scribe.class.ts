@@ -1,6 +1,6 @@
 import {existsSync} from 'node:fs';
 import {env} from 'node:process';
-import {readFile, writeFile} from 'node:fs/promises';
+import {readFile, unlink, writeFile} from 'node:fs/promises';
 import {type Scribe} from '../types.js';
 
 export class FilesystemScribe implements Scribe {
@@ -19,10 +19,14 @@ export class FilesystemScribe implements Scribe {
 	}
 
 	async read(path: string): Promise<string> {
-		return readFile(path, 'utf8');
+		return readFile(this.fullPath(path), 'utf8');
 	}
 
 	async write(path: string, contents: string): Promise<void> {
-		await writeFile(path, contents, 'utf8');
+		await writeFile(this.fullPath(path), contents, 'utf8');
+	}
+
+	async destroy(file: string) {
+		await unlink(this.fullPath(file));
 	}
 }

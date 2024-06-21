@@ -52,6 +52,10 @@ export class DotConfig extends EventTarget {
 		return config;
 	}
 
+	async remove(path: string): Promise<void> {
+		await this.scribe.destroy(path);
+	}
+
 	async get<T>(path: string, defaultValue: T | undefined | ErrorIfNotFoundToken = errorIfNotFoundToken): Promise<T | undefined> {
 		if (this.cache.items[path]) {
 			return this.cache.items[path] as T;
