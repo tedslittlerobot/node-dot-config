@@ -50,9 +50,9 @@ export class DotConfig extends EventTarget {
 		}
 	}
 
-	async get<T>(path: string, defaultValue: T | undefined | ErrorIfNotFoundToken = errorIfNotFoundToken) {
+	async get<T>(path: string, defaultValue: T | undefined | ErrorIfNotFoundToken = errorIfNotFoundToken): Promise<T | undefined> {
 		if (this.cache.items[path]) {
-			return this.cache.items[path];
+			return this.cache.items[path] as T;
 		}
 
 		const encoder = encoderMatch(path, this.encoders, this.fallbackEncoder);
@@ -62,7 +62,7 @@ export class DotConfig extends EventTarget {
 				throw new NoConfigFile(path);
 			}
 
-			return defaultValue;
+			return defaultValue as T | undefined;
 		}
 
 		const config = encoder.decode(await this.scribe.read(path));
