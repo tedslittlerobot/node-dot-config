@@ -1,6 +1,7 @@
 import {existsSync} from 'node:fs';
 import {env} from 'node:process';
 import {readFile, unlink, writeFile} from 'node:fs/promises';
+import {mkdirp} from 'mkdirp';
 import {type Scribe} from '../types.js';
 
 export class FilesystemScribe implements Scribe {
@@ -23,6 +24,7 @@ export class FilesystemScribe implements Scribe {
 	}
 
 	async write(path: string, contents: string): Promise<void> {
+		await mkdirp(path);
 		await writeFile(this.fullPath(path), contents, 'utf8');
 	}
 
