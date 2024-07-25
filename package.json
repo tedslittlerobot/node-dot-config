@@ -1,6 +1,6 @@
 {
   "name": "dot-config-cache",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A wrapper around storing and retrieving config from .config",
   "repository": {
     "type": "git",
