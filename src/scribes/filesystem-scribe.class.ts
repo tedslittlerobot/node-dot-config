@@ -25,8 +25,10 @@ export class FilesystemScribe implements Scribe {
 	}
 
 	async write(path: string, contents: string): Promise<void> {
-		await mkdirp(dirname(path));
-		await writeFile(this.fullPath(path), contents, 'utf8');
+		const fullPath = this.fullPath(path);
+
+		await mkdirp(dirname(fullPath));
+		await writeFile(fullPath, contents, 'utf8');
 	}
 
 	async destroy(path: string) {
